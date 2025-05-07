@@ -35,8 +35,8 @@ function moveAgents() {
   const newAgents: Agent[] = [];
 
   agents = agents.map(agent => {
-    // ランダムな方向に移動 (上下左右)
-    const direction = Math.floor(Math.random() * 4);
+    // ランダムな方向に移動 (8方向)
+    const direction = Math.floor(Math.random() * 8);
     let dx = 0;
     let dy = 0;
 
@@ -53,10 +53,26 @@ function moveAgents() {
       case 3: // 右
         dx = 1;
         break;
+      case 4: // 左上
+        dx = -1;
+        dy = -1;
+        break;
+      case 5: // 右上
+        dx = 1;
+        dy = -1;
+        break;
+      case 6: // 左下
+        dx = -1;
+        dy = 1;
+        break;
+      case 7: // 右下
+        dx = 1;
+        dy = 1;
+        break;
     }
 
-    // 移動マス数を確率に応じて選択 (1からagent.movまで)
-    const moveDistance = Math.floor(Math.random() * agent.mov) + 1;
+    // 移動距離はagent.movを使用
+    const moveDistance = agent.mov;
 
     // 移動距離と方向を考慮した新しい座標
     let newX = agent.x + dx * moveDistance;
