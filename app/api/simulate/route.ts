@@ -22,8 +22,8 @@ for (let i = 0; i < 10; i++) { // 初期エージェント数を10体に修正
   agents.push({
     id: `agent-${agentIdCounter++}`, // カウンターを使用してIDを生成
     hp: Math.floor(Math.random() * 81) + 20, // 20から100の間でランダム
-    atk: 10,
-    def: 5,
+    atk: Math.floor(Math.random() * 101), // 0から100の間でランダム
+    def: Math.floor(Math.random() * 101), // 0から100の間でランダム
     mov: Math.floor(Math.random() * 5) + 1, // 移動力は1から5の間でランダムに設定
     x: Math.floor(Math.random() * GRID_SIZE),
     y: Math.floor(Math.random() * GRID_SIZE),
@@ -101,8 +101,8 @@ function moveAgents() {
       const newAgent: Agent = {
         id: `agent-${agentIdCounter++}`, // カウンターを使用してユニークなIDを生成
         hp: Math.floor(Math.random() * 21) + 80, // 80から100の間でランダム
-        atk: agent.atk,
-        def: agent.def,
+        atk: Math.floor(Math.random() * 101), // 0から100の間でランダム
+        def: Math.floor(Math.random() * 101), // 0から100の間でランダム
         mov: agent.mov,
         x: agent.x, // 分裂したエージェントは元の位置に生成
         y: agent.y,
@@ -111,8 +111,49 @@ function moveAgents() {
     }
   });
 
-  // 次のステップのエージェントリストに新しいエージェントを追加
-  agents = [...nextAgents, ...newAgents];
+  // セルごとのエージェントリストを作成
+  const agentsByCell = new Map<string, Agent[]>();
+  nextAgents.forEach(agent => {
+    const cellKey = `${agent.x},${agent.y}`;
+    if (!agentsByCell.has(cellKey)) {
+      agentsByCell.set(cellKey, []);
+    }
+    agentsByCell.get(cellKey)!.push(agent);
+  });
+
+  // HP吸収の計算とエージェントのフィルタリング
+  const finalAgents: Agent[] = [];
+  agentsByCell.forEach(cellAgents => {
+    if (cellAgents.length > 1) {
+      // 同じセルに複数のエージェントがいる場合、HP吸収の計算を行う
+      for (let i = 0; i < cellAgents.length; i++) {
+        for (let j = i + 1; j < cellAgents.length; j++) {
+          const agentA = cellAgents[i];
+          const agentB = cellAgents[j];
+
+          // HP吸収量の計算
+          const absorbA = agentA.atk - agentB.def;
+          const absorbB = agentB.atk - agentA.def;
+
+          // HPの更新 (一時変数に格納して同時に更新されたかのように扱う)
+          const nextHpA = agentA.hp + absorbA;
+          const nextHpB = agentB.hp + absorbB;
+
+          agentA.hp = nextHpA;
+          agentB.hp = nextHpB;
+        }
+      }
+    }
+    // HPが0より大きいエージェントを最終リストに追加
+    cellAgents.forEach(agent => {
+      if (agent.hp > 0) {
+        finalAgents.push(agent);
+      }
+    });
+  });
+
+  // 次のステップのエージェントリストに新しいエージェントを追加し、HPが0以下のエージェントを除外
+  agents = [...finalAgents, ...newAgents];
 }
 
 // シミュレーションのステップを実行するAPIルート
