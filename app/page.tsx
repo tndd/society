@@ -62,7 +62,7 @@ export default function Home() {
         {agents.map(agent => (
           <div
             key={agent.id}
-            className="absolute rounded-full bg-blue-500"
+            className={`absolute rounded-full ${agent.hp <= 10 ? 'bg-red-500' : 'bg-blue-500'}`}
             style={{
               width: CELL_SIZE,
               height: CELL_SIZE,

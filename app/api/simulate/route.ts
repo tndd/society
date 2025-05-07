@@ -16,9 +16,11 @@ const GRID_SIZE = 100;
 
 // エージェントの初期状態
 let agents: Agent[] = [];
-for (let i = 1; i <= 10; i++) {
+let agentIdCounter = 0; // グローバルなエージェントIDカウンター
+
+for (let i = 0; i < 10; i++) { // 初期エージェント数を10体に修正
   agents.push({
-    id: `agent-${i}`,
+    id: `agent-${agentIdCounter++}`, // カウンターを使用してIDを生成
     hp: 100,
     atk: 10,
     def: 5,
@@ -97,7 +99,7 @@ function moveAgents() {
     // 確率で分裂
     if (Math.random() < SPLIT_PROBABILITY) {
       const newAgent: Agent = {
-        id: `agent-${agents.length + newAgents.length + 1}`, // ユニークなIDを生成
+        id: `agent-${agentIdCounter++}`, // カウンターを使用してユニークなIDを生成
         hp: agent.hp, // 分裂時のHPは元のエージェントと同じ
         atk: agent.atk,
         def: agent.def,
