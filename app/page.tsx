@@ -68,9 +68,9 @@ export default function Home() {
           ダメージ累計: {totalDamage}
         </div>
 
-        {/* 殺傷数表示 */}
+        {/* 戦死数表示 */}
         <div className="mb-4 text-lg font-bold">
-          殺傷数: {deathsByInteraction}
+          戦死数: {deathsByInteraction}
         </div>
       </div>
 
