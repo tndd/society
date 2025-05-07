@@ -29,7 +29,11 @@ for (let i = 1; i <= 10; i++) {
 }
 
 // エージェントを移動させる関数
+const SPLIT_PROBABILITY = 0.01; // 各ステップでの分裂確率 (1%)
+
 function moveAgents() {
+  const newAgents: Agent[] = [];
+
   agents = agents.map(agent => {
     // ランダムな方向に移動 (上下左右)
     const direction = Math.floor(Math.random() * 4);
@@ -51,8 +55,25 @@ function moveAgents() {
         break;
     }
 
+    // 確率で分裂
+    if (Math.random() < SPLIT_PROBABILITY) {
+      const newAgent: Agent = {
+        id: `agent-${agents.length + newAgents.length + 1}`, // ユニークなIDを生成
+        hp: agent.hp,
+        atk: agent.atk,
+        def: agent.def,
+        mov: agent.mov,
+        x: newX, // 分裂したエージェントと同じ位置
+        y: newY,
+      };
+      newAgents.push(newAgent);
+    }
+
     return { ...agent, x: newX, y: newY };
   });
+
+  // 新しいエージェントをリストに追加
+  agents = [...agents, ...newAgents];
 }
 
 // シミュレーションのステップを実行するAPIルート
