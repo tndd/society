@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 // エージェントのデータ構造 (バックエンドと合わせる)
 interface Agent {
@@ -62,7 +62,7 @@ export default function Home() {
         {agents.map(agent => (
           <div
             key={agent.id}
-            className={`absolute rounded-full ${agent.hp <= 10 ? 'bg-red-500' : 'bg-blue-500'}`}
+            className={`absolute rounded-full ${agent.hp <= 10 ? 'bg-red-500' : agent.hp <= 40 ? 'bg-yellow-500' : 'bg-green-500'}`}
             style={{
               width: CELL_SIZE,
               height: CELL_SIZE,
