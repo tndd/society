@@ -33,8 +33,17 @@ const SPLIT_PROBABILITY = 0.05; // 各ステップでの分裂確率 (5%)
 
 function moveAgents() {
   const newAgents: Agent[] = [];
+  const nextAgents: Agent[] = [];
 
-  agents = agents.map(agent => {
+  agents.forEach(agent => {
+    // HPを1減らす
+    const newHp = agent.hp - 1;
+
+    // HPが0以下になったエージェントは消滅
+    if (newHp <= 0) {
+      return; // このエージェントは次のステップに進まない
+    }
+
     // ランダムな方向に移動 (8方向)
     const direction = Math.floor(Math.random() * 8);
     let dx = 0;
@@ -82,11 +91,14 @@ function moveAgents() {
     newX = Math.max(0, Math.min(GRID_SIZE - 1, newX));
     newY = Math.max(0, Math.min(GRID_SIZE - 1, newY));
 
+    // 移動後のエージェントを次のステップのリストに追加
+    nextAgents.push({ ...agent, hp: newHp, x: newX, y: newY });
+
     // 確率で分裂
     if (Math.random() < SPLIT_PROBABILITY) {
       const newAgent: Agent = {
         id: `agent-${agents.length + newAgents.length + 1}`, // ユニークなIDを生成
-        hp: agent.hp,
+        hp: agent.hp, // 分裂時のHPは元のエージェントと同じ
         atk: agent.atk,
         def: agent.def,
         mov: agent.mov,
@@ -95,12 +107,10 @@ function moveAgents() {
       };
       newAgents.push(newAgent);
     }
-
-    return { ...agent, x: newX, y: newY };
   });
 
-  // 新しいエージェントをリストに追加
-  agents = [...agents, ...newAgents];
+  // 次のステップのエージェントリストに新しいエージェントを追加
+  agents = [...nextAgents, ...newAgents];
 }
 
 // シミュレーションのステップを実行するAPIルート
