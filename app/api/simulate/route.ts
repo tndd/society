@@ -113,53 +113,54 @@ function moveAgents() {
     }
   });
 
-  // セルごとのエージェントリストを作成
-  const agentsByCell = new Map<string, Agent[]>();
-  nextAgents.forEach(agent => {
-    const cellKey = `${agent.x},${agent.y}`;
-    if (!agentsByCell.has(cellKey)) {
-      agentsByCell.set(cellKey, []);
-    }
-    agentsByCell.get(cellKey)!.push(agent);
-  });
+  // 3マス以内の当たり判定とHP吸収の計算
+  const agentsAfterInteraction: Agent[] = [...nextAgents]; // 相互作用後のエージェントリスト（初期値は移動後のエージェントリスト）
+  const processedPairs = new Set<string>(); // 処理済みのエージェントペアを記録するためのセット
 
-  // HP吸収の計算とエージェントのフィルタリング
-  const finalAgents: Agent[] = [];
-  agentsByCell.forEach(cellAgents => {
-    if (cellAgents.length > 1) {
-      // 同じセルに複数のエージェントがいる場合、HP吸収の計算を行う
-      for (let i = 0; i < cellAgents.length; i++) {
-        for (let j = i + 1; j < cellAgents.length; j++) {
-          const agentA = cellAgents[i];
-          const agentB = cellAgents[j];
+  for (let i = 0; i < agentsAfterInteraction.length; i++) {
+    for (let j = i + 1; j < agentsAfterInteraction.length; j++) {
+      const agentA = agentsAfterInteraction[i];
+      const agentB = agentsAfterInteraction[j];
 
-          // HP吸収量の計算
-          const absorbA = agentA.atk - agentB.def;
-          const absorbB = agentB.atk - agentA.def;
+      // 既に処理済みのペアか、どちらかが既に死亡している場合はスキップ
+      if (agentA.hp <= 0 || agentB.hp <= 0) continue;
 
-          // ダメージやり取りの累計に加算 (絶対値の合計)
-          totalDamageExchanged += Math.abs(absorbA) + Math.abs(absorbB);
+      // 距離の計算 (チェス盤距離)
+      const distance = Math.max(Math.abs(agentA.x - agentB.x), Math.abs(agentA.y - agentB.y));
 
-          // HPの更新 (一時変数に格納して同時に更新されたかのように扱う)
-          const nextHpA = agentA.hp + absorbA;
-          const nextHpB = agentB.hp + absorbB;
+      // 3マス以内であればHP吸収の計算を行う
+      if (distance <= 3) {
+        // ペアのIDをソートしてキーを生成し、処理済みかチェック
+        const pairKey = [agentA.id, agentB.id].sort().join('-');
+        if (processedPairs.has(pairKey)) continue;
 
-          agentA.hp = nextHpA;
-          agentB.hp = nextHpB;
-        }
+        // HP吸収量の計算
+        const absorbA = agentA.atk - agentB.def;
+        const absorbB = agentB.atk - agentA.def;
+
+        // ダメージやり取りの累計に加算 (絶対値の合計)
+        totalDamageExchanged += Math.abs(absorbA) + Math.abs(absorbB);
+
+        // HPの更新
+        agentA.hp += absorbA;
+        agentB.hp += absorbB;
+
+        // 処理済みペアとして記録
+        processedPairs.add(pairKey);
       }
     }
-    // HPが0より大きいエージェントを最終リストに追加し、死亡数をカウント
-    cellAgents.forEach(agent => {
-      if (agent.hp > 0) {
-        finalAgents.push(agent);
-      } else {
-        totalDeathsByInteraction++; // HPが0以下になったエージェントをカウント
-      }
-    });
+  }
+
+  // HPが0以下のエージェントをフィルタリングし、死亡数をカウント
+  const finalAgents = agentsAfterInteraction.filter(agent => {
+    if (agent.hp <= 0) {
+      totalDeathsByInteraction++; // HPが0以下になったエージェントをカウント
+      return false; // リストから除外
+    }
+    return true; // リストに残す
   });
 
-  // 次のステップのエージェントリストに新しいエージェントを追加し、HPが0以下のエージェントを除外
+  // 次のステップのエージェントリストに新しいエージェントを追加
   agents = [...finalAgents, ...newAgents];
 }
 
