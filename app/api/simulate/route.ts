@@ -21,7 +21,7 @@ let agentIdCounter = 0; // グローバルなエージェントIDカウンター
 for (let i = 0; i < 10; i++) { // 初期エージェント数を10体に修正
   agents.push({
     id: `agent-${agentIdCounter++}`, // カウンターを使用してIDを生成
-    hp: 100,
+    hp: Math.floor(Math.random() * 81) + 20, // 20から100の間でランダム
     atk: 10,
     def: 5,
     mov: Math.floor(Math.random() * 5) + 1, // 移動力は1から5の間でランダムに設定
@@ -100,7 +100,7 @@ function moveAgents() {
     if (Math.random() < SPLIT_PROBABILITY) {
       const newAgent: Agent = {
         id: `agent-${agentIdCounter++}`, // カウンターを使用してユニークなIDを生成
-        hp: agent.hp, // 分裂時のHPは元のエージェントと同じ
+        hp: Math.floor(Math.random() * 21) + 80, // 80から100の間でランダム
         atk: agent.atk,
         def: agent.def,
         mov: agent.mov,
