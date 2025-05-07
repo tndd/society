@@ -20,7 +20,7 @@ let agentIdCounter = 0; // グローバルなエージェントIDカウンター
 let totalDamageExchanged = 0; // ダメージやり取りの累計
 let totalDeathsByInteraction = 0; // ダメージやり取りによる死亡数
 
-for (let i = 0; i < 10; i++) { // 初期エージェント数を10体に修正
+for (let i = 0; i < 100; i++) { // 初期エージェント数を10体に修正
   agents.push({
     id: `agent-${agentIdCounter++}`, // カウンターを使用してIDを生成
     hp: Math.floor(Math.random() * 81) + 20, // 20から100の間でランダム
@@ -32,8 +32,8 @@ for (let i = 0; i < 10; i++) { // 初期エージェント数を10体に修正
   });
 }
 
-// エージェントを移動させる関数
-const SPLIT_PROBABILITY = 0.05; // 各ステップでの分裂確率 (5%)
+// 各ステップでの分裂確率
+const SPLIT_PROBABILITY = 0.1;
 
 function moveAgents() {
   const newAgents: Agent[] = [];
@@ -41,7 +41,15 @@ function moveAgents() {
 
   agents.forEach(agent => {
     // HPを1減らす
-    const newHp = agent.hp - 1;
+    let newHp = agent.hp - 1;
+
+    // atkの維持コストを計算しHPから減算
+    const atkCost = Math.floor(agent.atk / 10);
+    newHp -= atkCost;
+
+    // defの維持コストを計算しHPから減算
+    const defCost = Math.floor(agent.def / 30);
+    newHp -= defCost;
 
     // HPが0以下になったエージェントは消滅
     if (newHp <= 0) {
