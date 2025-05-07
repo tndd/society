@@ -17,6 +17,8 @@ const GRID_SIZE = 100;
 // エージェントの初期状態
 let agents: Agent[] = [];
 let agentIdCounter = 0; // グローバルなエージェントIDカウンター
+let totalDamageExchanged = 0; // ダメージやり取りの累計
+let totalDeathsByInteraction = 0; // ダメージやり取りによる死亡数
 
 for (let i = 0; i < 10; i++) { // 初期エージェント数を10体に修正
   agents.push({
@@ -135,6 +137,9 @@ function moveAgents() {
           const absorbA = agentA.atk - agentB.def;
           const absorbB = agentB.atk - agentA.def;
 
+          // ダメージやり取りの累計に加算 (絶対値の合計)
+          totalDamageExchanged += Math.abs(absorbA) + Math.abs(absorbB);
+
           // HPの更新 (一時変数に格納して同時に更新されたかのように扱う)
           const nextHpA = agentA.hp + absorbA;
           const nextHpB = agentB.hp + absorbB;
@@ -144,10 +149,12 @@ function moveAgents() {
         }
       }
     }
-    // HPが0より大きいエージェントを最終リストに追加
+    // HPが0より大きいエージェントを最終リストに追加し、死亡数をカウント
     cellAgents.forEach(agent => {
       if (agent.hp > 0) {
         finalAgents.push(agent);
+      } else {
+        totalDeathsByInteraction++; // HPが0以下になったエージェントをカウント
       }
     });
   });
@@ -159,5 +166,5 @@ function moveAgents() {
 // シミュレーションのステップを実行するAPIルート
 export async function GET() {
   moveAgents(); // エージェントを移動させる
-  return NextResponse.json(agents);
+  return NextResponse.json({ agents: agents, totalDamageExchanged: totalDamageExchanged, totalDeathsByInteraction: totalDeathsByInteraction });
 }

@@ -13,18 +13,40 @@ interface Agent {
   y: number; // グリッド上のY座標
 }
 
+// シミュレーションデータの構造 (バックエンドと合わせる)
+interface SimulationData {
+  agents: Agent[];
+  totalDamageExchanged: number;
+  totalDeathsByInteraction: number; // ダメージやり取りによる死亡数
+}
+
+// エージェントのデータ構造 (バックエンドと合わせる)
+interface Agent {
+  id: string;
+  hp: number;
+  atk: number;
+  def: number;
+  mov: number;
+  x: number; // グリッド上のX座標
+  y: number; // グリッド上のY座標
+}
+
 // グリッドのサイズ (バックエンドと合わせる)
 const GRID_SIZE = 100;
 const CELL_SIZE = 4; // グリッドセルのサイズ (px)
 
 export default function Home() {
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [totalDamage, setTotalDamage] = useState<number>(0); // ダメージ累計
+  const [deathsByInteraction, setDeathsByInteraction] = useState<number>(0); // ダメージやり取りによる死亡数
 
   useEffect(() => {
     const fetchAgents = async () => {
       const res = await fetch('/api/simulate');
-      const data: Agent[] = await res.json();
-      setAgents(data);
+      const data: SimulationData = await res.json();
+      setAgents(data.agents);
+      setTotalDamage(data.totalDamageExchanged);
+      setDeathsByInteraction(data.totalDeathsByInteraction);
     };
 
     // 初回フェッチ
@@ -38,7 +60,20 @@ export default function Home() {
   }, []); // 空の依存配列でマウント時に一度だけ実行
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
+      {/* 情報表示コンテナ */}
+      <div>
+        {/* ダメージ累計表示 */}
+        <div className="mb-4 text-lg font-bold">
+          ダメージ累計: {totalDamage}
+        </div>
+
+        {/* 殺傷数表示 */}
+        <div className="mb-4 text-lg font-bold">
+          殺傷数: {deathsByInteraction}
+        </div>
+      </div>
+
       {/* グリッドコンテナ */}
       <div
         className="relative border border-gray-400"
