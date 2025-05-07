@@ -47,12 +47,12 @@ export default function Home() {
       {/* 情報表示コンテナ */}
       <div>
         {/* ダメージ累計表示 */}
-        <div className="mb-4 text-lg font-bold">
+        <div className="mb-4 text-lg font-bold text-black">
           ダメージ累計: {totalDamage}
         </div>
 
         {/* 戦死数表示 */}
-        <div className="mb-4 text-lg font-bold">
+        <div className="mb-4 text-lg font-bold text-black">
           戦死数: {deathsByInteraction}
         </div>
       </div>
