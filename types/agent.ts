@@ -4,6 +4,7 @@ export interface Agent {
   atk: number;
   def: number;
   mov: number;
-  x: number; // グリッド上のX座標
-  y: number; // グリッド上のY座標
+  x: number;
+  y: number;
+  createdAtStep: number; // エージェントが生成されたステップ
 }

@@ -10,6 +10,7 @@ interface SimulationData {
   agents: Agent[];
   totalDamageExchanged: number;
   totalDeathsByInteraction: number; // ダメージやり取りによる死亡数
+  currentStep: number; // 現在のシミュレーションステップ
 }
 
 // エージェントのデータ構造 (バックエンドと合わせる)
@@ -22,6 +23,7 @@ export default function Home() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [totalDamage, setTotalDamage] = useState<number>(0); // ダメージ累計
   const [deathsByInteraction, setDeathsByInteraction] = useState<number>(0); // ダメージやり取りによる死亡数
+  const [currentStep, setCurrentStep] = useState<number>(0); // 現在のシミュレーションステップ
 
   useEffect(() => {
     const fetchAgents = async () => {
@@ -30,6 +32,7 @@ export default function Home() {
       setAgents(data.agents);
       setTotalDamage(data.totalDamageExchanged);
       setDeathsByInteraction(data.totalDeathsByInteraction);
+      setCurrentStep(data.currentStep);
     };
 
     // 初回フェッチ
@@ -41,6 +44,14 @@ export default function Home() {
     // クリーンアップ関数
     return () => clearInterval(intervalId);
   }, []); // 空の依存配列でマウント時に一度だけ実行
+
+  const topAgents = agents
+    .map(agent => ({
+      ...agent,
+      survivalTime: currentStep - agent.createdAtStep,
+    }))
+    .sort((a, b) => b.survivalTime - a.survivalTime)
+    .slice(0, 10);
 
   return (
     <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
@@ -55,6 +66,16 @@ export default function Home() {
         <div className="mb-4 text-lg font-bold text-black">
           戦死数: {deathsByInteraction}
         </div>
+      </div>
+
+      {/* 上位エージェント情報表示コンテナ */}
+      <div className="mb-8 p-4 border border-gray-400 rounded bg-white">
+        <h2 className="text-xl font-bold mb-2 text-black">生存時間上位10エージェント</h2>
+        {topAgents.map(agent => (
+          <div key={agent.id} className="mb-1 text-sm text-gray-700">
+            ID: {agent.id}, HP: {agent.hp}, ATK: {agent.atk}, DEF: {agent.def}, MOV: {agent.mov}, 生存: {agent.survivalTime}ステップ
+          </div>
+        ))}
       </div>
 
       {/* グリッドコンテナ */}

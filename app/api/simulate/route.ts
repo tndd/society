@@ -12,6 +12,7 @@ let agents: Agent[] = [];
 let agentIdCounter = 0; // グローバルなエージェントIDカウンター
 let totalDamageExchanged = 0; // ダメージやり取りの累計
 let totalDeathsByInteraction = 0; // ダメージやり取りによる死亡数
+let currentStep = 0; // 現在のシミュレーションステップ
 
 for (let i = 0; i < 100; i++) { // 初期エージェント数を10体に修正
   agents.push({
@@ -22,6 +23,7 @@ for (let i = 0; i < 100; i++) { // 初期エージェント数を10体に修正
     mov: Math.floor(Math.random() * 5) + 1, // 移動力は1から5の間でランダムに設定
     x: Math.floor(Math.random() * GRID_SIZE),
     y: Math.floor(Math.random() * GRID_SIZE),
+    createdAtStep: currentStep, // 生成ステップを記録
   });
 }
 
@@ -112,6 +114,7 @@ function moveAgents() {
         mov: agent.mov,
         x: agent.x, // 分裂したエージェントは元の位置に生成
         y: agent.y,
+        createdAtStep: currentStep, // 生成ステップを記録
       };
       newAgents.push(newAgent);
     }
@@ -192,6 +195,7 @@ function moveAgents() {
 
 // シミュレーションのステップを実行するAPIルート
 export async function GET() {
+  currentStep++; // シミュレーションステップをインクリメント
   moveAgents(); // エージェントを移動させる
-  return NextResponse.json({ agents: agents, totalDamageExchanged: totalDamageExchanged, totalDeathsByInteraction: totalDeathsByInteraction });
+  return NextResponse.json({ agents: agents, totalDamageExchanged: totalDamageExchanged, totalDeathsByInteraction: totalDeathsByInteraction, currentStep: currentStep });
 }
