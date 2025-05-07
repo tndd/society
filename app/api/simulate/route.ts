@@ -139,8 +139,9 @@ function moveAgents() {
       // 距離の計算 (チェス盤距離)
       const distance = Math.max(Math.abs(agentA.x - agentB.x), Math.abs(agentA.y - agentB.y));
 
-      // 3マス以内であればHP吸収の計算を行う
-      if (distance <= 3) {
+      // 範囲内であればHP吸収の計算を行う
+      const HIT_DISTANCE = 2; // 当たり判定の距離
+      if (distance <= HIT_DISTANCE) {
         // ペアのIDをソートしてキーを生成し、処理済みかチェック
         const pairKey = [agentA.id, agentB.id].sort().join('-');
         if (processedPairs.has(pairKey)) continue;
