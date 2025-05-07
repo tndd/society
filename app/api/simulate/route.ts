@@ -29,7 +29,7 @@ for (let i = 1; i <= 10; i++) {
 }
 
 // エージェントを移動させる関数
-const SPLIT_PROBABILITY = 0.01; // 各ステップでの分裂確率 (1%)
+const SPLIT_PROBABILITY = 0.05; // 各ステップでの分裂確率 (5%)
 
 function moveAgents() {
   const newAgents: Agent[] = [];
