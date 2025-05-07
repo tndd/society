@@ -95,6 +95,9 @@ function moveAgents() {
     // 移動距離はagent.movを使用
     const moveDistance = agent.mov;
 
+    // 移動距離に応じたコストを計算しHPから減算
+    newHp -= Math.floor(moveDistance / 3);
+
     // 移動距離と方向を考慮した新しい座標
     let newX = agent.x + dx * moveDistance;
     let newY = agent.y + dy * moveDistance;
