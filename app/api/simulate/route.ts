@@ -12,13 +12,21 @@ interface Agent {
 }
 
 // グリッドのサイズ
-const GRID_SIZE = 10;
+const GRID_SIZE = 100;
 
 // エージェントの初期状態
-let agents: Agent[] = [
-  { id: 'agent-1', hp: 100, atk: 10, def: 5, mov: 1, x: 0, y: 0 },
-  { id: 'agent-2', hp: 80, atk: 12, def: 6, mov: 2, x: 9, y: 9 },
-];
+let agents: Agent[] = [];
+for (let i = 1; i <= 10; i++) {
+  agents.push({
+    id: `agent-${i}`,
+    hp: 100,
+    atk: 10,
+    def: 5,
+    mov: 1, // 移動力は一旦1に固定
+    x: Math.floor(Math.random() * GRID_SIZE),
+    y: Math.floor(Math.random() * GRID_SIZE),
+  });
+}
 
 // エージェントを移動させる関数
 function moveAgents() {

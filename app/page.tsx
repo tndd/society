@@ -14,8 +14,8 @@ interface Agent {
 }
 
 // グリッドのサイズ (バックエンドと合わせる)
-const GRID_SIZE = 10;
-const CELL_SIZE = 40; // グリッドセルのサイズ (px)
+const GRID_SIZE = 100;
+const CELL_SIZE = 4; // グリッドセルのサイズ (px)
 
 export default function Home() {
   const [agents, setAgents] = useState<Agent[]>([]);
@@ -62,16 +62,15 @@ export default function Home() {
         {agents.map(agent => (
           <div
             key={agent.id}
-            className="absolute flex items-center justify-center rounded-full bg-blue-500 text-white text-xs"
+            className="absolute rounded-full bg-blue-500"
             style={{
               width: CELL_SIZE,
               height: CELL_SIZE,
               top: agent.y * CELL_SIZE,
               left: agent.x * CELL_SIZE,
-              transition: 'top 0.3s ease-out, left 0.3s ease-out', // 滑らかな移動
+              transition: 'top 0.1s linear, left 0.1s linear', // より速い移動
             }}
           >
-            {agent.id.split('-')[1]} {/* エージェントIDの数字部分を表示 */}
           </div>
         ))}
       </div>
