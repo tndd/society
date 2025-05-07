@@ -22,7 +22,7 @@ for (let i = 1; i <= 10; i++) {
     hp: 100,
     atk: 10,
     def: 5,
-    mov: 1, // 移動力は一旦1に固定
+    mov: Math.floor(Math.random() * 5) + 1, // 移動力は1から5の間でランダムに設定
     x: Math.floor(Math.random() * GRID_SIZE),
     y: Math.floor(Math.random() * GRID_SIZE),
   });
@@ -37,23 +37,34 @@ function moveAgents() {
   agents = agents.map(agent => {
     // ランダムな方向に移動 (上下左右)
     const direction = Math.floor(Math.random() * 4);
-    let newX = agent.x;
-    let newY = agent.y;
+    let dx = 0;
+    let dy = 0;
 
     switch (direction) {
       case 0: // 上
-        newY = Math.max(0, agent.y - agent.mov);
+        dy = -1;
         break;
       case 1: // 下
-        newY = Math.min(GRID_SIZE - 1, agent.y + agent.mov);
+        dy = 1;
         break;
       case 2: // 左
-        newX = Math.max(0, agent.x - agent.mov);
+        dx = -1;
         break;
       case 3: // 右
-        newX = Math.min(GRID_SIZE - 1, agent.x + agent.mov);
+        dx = 1;
         break;
     }
+
+    // 移動マス数を確率に応じて選択 (1からagent.movまで)
+    const moveDistance = Math.floor(Math.random() * agent.mov) + 1;
+
+    // 移動距離と方向を考慮した新しい座標
+    let newX = agent.x + dx * moveDistance;
+    let newY = agent.y + dy * moveDistance;
+
+    // グリッドの境界内に収まるように調整
+    newX = Math.max(0, Math.min(GRID_SIZE - 1, newX));
+    newY = Math.max(0, Math.min(GRID_SIZE - 1, newY));
 
     // 確率で分裂
     if (Math.random() < SPLIT_PROBABILITY) {
@@ -63,8 +74,8 @@ function moveAgents() {
         atk: agent.atk,
         def: agent.def,
         mov: agent.mov,
-        x: newX, // 分裂したエージェントと同じ位置
-        y: newY,
+        x: agent.x, // 分裂したエージェントは元の位置に生成
+        y: agent.y,
       };
       newAgents.push(newAgent);
     }
