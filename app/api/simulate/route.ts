@@ -156,6 +156,10 @@ function moveAgents() {
           }
         }
 
+        // HPの上限を100に設定
+        agentA.hp = Math.min(agentA.hp, 100);
+        agentB.hp = Math.min(agentB.hp, 100);
+
         // 処理済みペアとして記録
         processedPairs.add(pairKey);
       }
