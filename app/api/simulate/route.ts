@@ -161,10 +161,16 @@ function moveAgents() {
             // AがHPを獲得し、BがHPを失う
             agentA.hp += absorbA;
             agentB.hp -= absorbA; // BはAが獲得した分と同じだけ失う
+            if (agentB.hp <= 0) {
+              totalDeathsByInteraction++; // 相互作用による死亡としてカウント
+            }
           } else {
             // BがHPを獲得し、AがHPを失う
             agentB.hp += absorbB;
             agentA.hp -= absorbB; // AはBが獲得した分と同じだけ失う
+            if (agentA.hp <= 0) {
+              totalDeathsByInteraction++; // 相互作用による死亡としてカウント
+            }
           }
         }
 
