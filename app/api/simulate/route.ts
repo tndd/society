@@ -141,9 +141,20 @@ function moveAgents() {
         // ダメージやり取りの累計に加算 (絶対値の合計)
         totalDamageExchanged += Math.abs(absorbA) + Math.abs(absorbB);
 
-        // HPの更新
-        agentA.hp += absorbA;
-        agentB.hp += absorbB;
+        // HPの更新 (確率的な増減)
+        const totalAbsorb = Math.abs(absorbA) + Math.abs(absorbB);
+        if (totalAbsorb > 0) {
+          const randomValue = Math.random() * totalAbsorb;
+          if (randomValue < Math.abs(absorbA)) {
+            // AがHPを獲得し、BがHPを失う
+            agentA.hp += absorbA;
+            agentB.hp -= absorbA; // BはAが獲得した分と同じだけ失う
+          } else {
+            // BがHPを獲得し、AがHPを失う
+            agentB.hp += absorbB;
+            agentA.hp -= absorbB; // AはBが獲得した分と同じだけ失う
+          }
+        }
 
         // 処理済みペアとして記録
         processedPairs.add(pairKey);
