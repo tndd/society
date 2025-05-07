@@ -3,15 +3,7 @@
 import { useEffect, useState } from 'react';
 
 // エージェントのデータ構造 (バックエンドと合わせる)
-interface Agent {
-  id: string;
-  hp: number;
-  atk: number;
-  def: number;
-  mov: number;
-  x: number; // グリッド上のX座標
-  y: number; // グリッド上のY座標
-}
+import { Agent } from '@/types/agent';
 
 // シミュレーションデータの構造 (バックエンドと合わせる)
 interface SimulationData {
@@ -21,15 +13,6 @@ interface SimulationData {
 }
 
 // エージェントのデータ構造 (バックエンドと合わせる)
-interface Agent {
-  id: string;
-  hp: number;
-  atk: number;
-  def: number;
-  mov: number;
-  x: number; // グリッド上のX座標
-  y: number; // グリッド上のY座標
-}
 
 // グリッドのサイズ (バックエンドと合わせる)
 const GRID_SIZE = 100;

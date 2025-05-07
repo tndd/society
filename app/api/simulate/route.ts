@@ -1,15 +1,8 @@
 import { NextResponse } from 'next/server';
 
+import { Agent } from '@/types/agent';
+
 // エージェントのデータ構造
-interface Agent {
-  id: string;
-  hp: number;
-  atk: number;
-  def: number;
-  mov: number;
-  x: number; // グリッド上のX座標
-  y: number; // グリッド上のY座標
-}
 
 // グリッドのサイズ
 const GRID_SIZE = 100;
