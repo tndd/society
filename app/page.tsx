@@ -3,9 +3,9 @@
 import { useEffect, useState } from 'react';
 
 // エージェントのデータ構造 (バックエンドと合わせる)
+import SimulationGrid from '@/components/SimulationGrid';
+import TopAgentsDisplay from '@/components/TopAgentsDisplay';
 import { Agent } from '@/types/agent';
-import SimulationGrid from './components/SimulationGrid';
-import TopAgentsDisplay from './components/TopAgentsDisplay';
 
 // シミュレーションデータの構造 (バックエンドと合わせる)
 interface SimulationData {
